@@ -4,6 +4,7 @@ import { AccountService } from '../../core/services/account-service';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ToastService } from '../../core/services/toast-service';
 import { themes } from '../theme';
+import { BusyService } from '../../core/services/busy-service';
 
 @Component({
   selector: 'app-nav',
@@ -11,26 +12,29 @@ import { themes } from '../theme';
   templateUrl: './nav.html',
   styleUrl: './nav.css',
 })
-export class Nav implements OnInit{
+export class Nav implements OnInit {
   protected accountService = inject(AccountService);
+  protected busyService = inject(BusyService);
   private router = inject(Router);
   private toast = inject(ToastService);
   protected creds: any = {};
   protected loggedIn = signal(false);
-  protected selectedTheme = signal<string>(localStorage.getItem('theme') || 'light');
+  protected selectedTheme = signal<string>(
+    localStorage.getItem('theme') || 'light'
+  );
   protected themes = themes;
 
   ngOnInit(): void {
-    document.documentElement.setAttribute('data-theme', this.selectedTheme())
+    document.documentElement.setAttribute('data-theme', this.selectedTheme());
   }
 
-  handelSelectedThem(theme: string){
-    this.selectedTheme.set(theme)
-    localStorage.setItem('theme',theme)
-    document.documentElement.setAttribute('data-theme',theme)
-    const elem = document.activeElement as HTMLDivElement
+  handelSelectedThem(theme: string) {
+    this.selectedTheme.set(theme);
+    localStorage.setItem('theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    const elem = document.activeElement as HTMLDivElement;
 
-    if(elem) elem.blur();
+    if (elem) elem.blur();
   }
 
   login() {
@@ -38,7 +42,7 @@ export class Nav implements OnInit{
       next: () => {
         this.router.navigateByUrl('/members');
         this.creds = {};
-        this.toast.success("Login successfully.", 5000);
+        this.toast.success('Login successfully.', 5000);
       },
       error: (error) => {
         console.error('Login failed', error);
